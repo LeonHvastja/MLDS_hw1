@@ -20,16 +20,18 @@ class Tree:
         self.min_samples = min_samples
 
     def build(self, X, y):
-        return TreeNode(...) # dummy output
+        return TreeNode(...) # make this output the root node
 
 
 class TreeNode:
 
-    def __init__(self, ...):
+    def __init__(self, parent = None, decision_rule, ...):
+        self.parent = parent
+        self.decision_rule = decision_rule
         # ...
 
     def predict(self, X):
-        return np.ones(len(X))  # dummy output
+        return np.ones(len(X))  # make this output a vector of predictions
 
 
 class RandomForest:
@@ -65,10 +67,14 @@ if __name__ == "__main__":
     print("full", hw_tree_full(learn, test))
     print("random forests", hw_randomforests(learn, test))
 
-def gini_impurity(data: np.array, label_column: int):
-    # we can use this simplified version because we are solving a strictly binary 
-    # classification problem
-    label_one_probability = sum(data[:,label_column])/len(data)
+def gini_impurity(y: np.array):
+    """
+    We can use this simplified version because we are solving a strictly binary classification problem, 
+    assume y is a numpy array with values of 0 or 1.
+    """
+    
+    label_one_probability = sum(y)/len(y)
+    
     return 1 - ((label_one_probability)**2 + (1-label_one_probability)**2)
 
 
