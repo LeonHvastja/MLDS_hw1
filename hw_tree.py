@@ -67,7 +67,7 @@ if __name__ == "__main__":
     print("full", hw_tree_full(learn, test))
     print("random forests", hw_randomforests(learn, test))
 
-def gini_impurity(y: np.array):
+def gini_impurity(y):
     """
     We can use this simplified version because we are solving a strictly binary classification problem, 
     assume y is a numpy array with values of 0 or 1.
@@ -78,7 +78,7 @@ def gini_impurity(y: np.array):
     return 1 - ((label_one_probability)**2 + (1-label_one_probability)**2)
 
 
-def information_gain(data, left_partition_indicies, right_partition_indicies, label_column):
+def information_gain(y , left_partition_indicies, right_partition_indicies):
     n_left = len(left_partition_indicies)
     n_right = len(right_partition_indicies)
     n = n_left + n_right
@@ -86,8 +86,8 @@ def information_gain(data, left_partition_indicies, right_partition_indicies, la
     l_weight = n_left/n
     r_weight = n_right/n
     
-    inf_gain = (gini_impurity(data[np.concatenate((left_partition_indicies,right_partition_indicies))], label_column) 
-                - gini_impurity(data[left_partition_indicies], label_column)*l_weight 
-                - gini_impurity(data[right_partition_indicies], label_column)*r_weight)
+    inf_gain = (gini_impurity(y[np.concatenate((left_partition_indicies,right_partition_indicies))]) 
+                - gini_impurity(y[left_partition_indicies])*l_weight 
+                - gini_impurity(y[right_partition_indicies])*r_weight)
     
     return inf_gain
