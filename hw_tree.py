@@ -30,9 +30,11 @@ class Tree:
         assert (len(X) == len(y)), "The input data and label vector are not of equal length" 
         
         if (len(y) < self.min_samples): # we are in a leaf node
-            return TreeNode(None, None, None)
-        if (len(np.unique(y)) == 1): # check if we have a pure node
-            return TreeNode(None, None, None)
+            return TreeNode(None, None, round(np.mean(y))) # make the majority class the prediction for this node
+        if (np.unique(y)[0] == 1): # check if we have a node with all ones
+            return TreeNode(None, None, 1)
+        if (np.unique(y)[0] == 0):
+            return TreeNode(None, None, 0)
         
         right_i, left_i, decision_rule = find_decision_rule(X, y)
         
