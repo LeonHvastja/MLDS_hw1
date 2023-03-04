@@ -95,13 +95,32 @@ class Tree:
 
 
 class TreeNode:
-
-    def __init__(self, decision_rule, ...):
+    
+    def __init__(self, left, right, decision_rule):
+        """Left and right are TreeNode objects. Decision rule is either a tuple with a feature and value 
+        to split on or a single value which determines the leaf's predicted label.
+        """
+        self.left = left
+        self.right = right
         self.decision_rule = decision_rule
-        # ...
 
     def predict(self, X):
-        return np.ones(len(X))  # make this output a vector of predictions
+        prediction = np.empty(len(X))
+        
+        if ((self.left is None) and (self.right is None)): # we are in a leaf node
+            return self.decision_rule
+        
+        # get left and right indices
+        left_i = np.where(X.T[self.decision_rule[0]] < self.decision_rule[1])
+        right_i = np.where(X.T[self.decision_rule[0]] >= self.decision_rule[1])
+        
+        left_prediction = self.left.predict(X[left_i])
+        right_prediction = self.right.predict(X[right_i])
+        
+        prediction[left_i] = left_prediction
+        prediction[right_i] = right_prediction
+               
+        return prediction
 
 
 class RandomForest:
