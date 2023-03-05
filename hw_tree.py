@@ -153,12 +153,15 @@ class RandomForest:
 
 class RFModel:
 
-    def __init__(self, ...):
-        # ...
+    def __init__(self, tree_list):
+        self.tree_list = tree_list
 
     def predict(self, X):
-        # ...
-        return predictions
+        predictions = np.zeros(len(X))
+        for tree in self.tree_list:
+            predictions += tree.predict(X)
+        
+        return (np.round(predictions/len(self.tree_list)))
 
     def importance(self):
         imps = np.zeros(self.X.shape[1])
