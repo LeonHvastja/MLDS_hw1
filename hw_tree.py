@@ -6,7 +6,7 @@ def all_columns(X, rand):
 
 
 def random_sqrt_columns(X, rand):
-    c = ... # select random columns
+    c = rand.sample(range(0, X.shape[1]), round(X.shape[1]**0.5))
     return c
 
 
@@ -24,8 +24,6 @@ class Tree:
         Recusrively build a tree, stop recursion when a split has a child node with gini impurity 0 or
         when we have less than min_samples samples.
         """
-        # should probably add some checks that the target vector entires are 1 and 0.
-        
         if (len(y) < self.min_samples): # we are in a leaf node
             return TreeNode(None, None, round(np.mean(y))) # make the majority class the prediction for this node
         if (np.all(y == 1)): # check if we have a node with all ones
