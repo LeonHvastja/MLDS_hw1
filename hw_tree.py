@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 def all_columns(X, rand):
@@ -135,11 +136,19 @@ class RandomForest:
     def __init__(self, rand=None, n=50):
         self.n = n
         self.rand = rand
-        self.rftree = Tree(...)  # initialize the tree properly
+        self.rftree = Tree(rand = rand, 
+                           get_candidate_columns = random_sqrt_columns, 
+                           min_samples = 2)  # initialize the tree properly
 
     def build(self, X, y):
-        # ...
-        return RFModel(...)
+        random_trees = [] # initialize empty list of trees
+        for i in range(self.n):
+            bootstrap_indices = self.rand.choices(range(len(X)), k = self.n) # not sure how to handle this
+            out_of_bag_indices = list(set(range(len(X))).difference(bootstrap_indices))
+            
+            random_trees.append(self.rftree.build(X[bootstrap_indices], y[bootstrap_indices]))
+        
+        return RFModel(random_trees)
 
 
 class RFModel:
