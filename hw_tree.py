@@ -142,13 +142,15 @@ class RandomForest:
 
     def build(self, X, y):
         random_trees = []
+        oob_list = []
         for i in range(self.n):
-            bootstrap_indices = self.rand.choices(range(len(X)), k = self.n)
+            bootstrap_indices = self.rand.choices(range(len(X)), k = self.n) # not sure how to handle this
             out_of_bag_indices = list(set(range(len(X))).difference(bootstrap_indices))
             
             random_trees.append(self.rftree.build(X[bootstrap_indices], y[bootstrap_indices]))
+            oob_list.append(out_of_bag_indices)
         
-        return RFModel(random_trees)
+        return RFModel(random_trees, oob_list, X, y, self.rand)
 
 
 class RFModel:
@@ -170,31 +172,25 @@ class RFModel:
     def importance(self):
         
         imps = np.zeros(self.X.shape[1])
+
         for i, tree in enumerate(self.tree_list):
             oob_indices = self.oob_list[i]
-            baseline = misclassification_rate(tree.predict(self.X[oob_indices]),
+            X_oob = self.X[oob_indices].copy() # get an oob subset of X for predictions and shuffling
+            baseline = misclassification_rate(tree.predict(X_oob),
                                               self.y[oob_indices])
-            for j in len(self.X.shape[1]):
-                temp = self.X[:,]
-#         imps = np.zeros(self.X.shape[1])
-#         for i, tree in enumerate(self.tree_list):
-#             k = self.oob_list[i]
-#             baseline_prediction = tree.predict(self.X[k])
-#             baseline_score = self.misclassification_rate(baseline_prediction, self.y[k])
-            
-#             feature_importance = np.zeros(self.X.shape[1]) # feature importance for i-th tree
-#             for j, feature in enumerate(self.X.T):
-#                 temp = feature.copy()
-#                 self.rand.shuffle(self.X[:,j]) # destroy j-th feature
-#                 score = self.misclassification_rate(tree.predict(self.X[k]), self.y[k])   
-#                 score_diff = score - baseline_score # feature score for j-th feature
-#                 feature_importance[j] = score_diff
-#                 # reset the column
-#                 self.X[:,j] = temp
-                
-#             imps += feature_importance
-        
-#         return (imps / len(self.tree_list))
+            scores = np.zeros(self.X.shape[1]) # feature scores for i-th tree
+
+            for j in range(self.X.shape[1]):
+                temp = X_oob.copy()
+                np.random.shuffle(temp[:,j])
+                score = misclassification_rate(tree.predict(temp),
+                                               self.y[oob_indices])
+
+                scores[j] = score - baseline # feature score for j-th feature in i-th tree
+
+            imps += scores
+
+        return imps/len(self.tree_list)
     
 def misclassification_rate(prediction, y):
     return np.mean(prediction != y)
