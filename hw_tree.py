@@ -144,7 +144,7 @@ class RandomForest:
         random_trees = []
         oob_list = []
         for i in range(self.n):
-            bootstrap_indices = self.rand.choices(range(len(X)), k = self.n) # not sure how to handle this
+            bootstrap_indices = self.rand.choices(range(len(X)), k = len(X))
             out_of_bag_indices = list(set(range(len(X))).difference(bootstrap_indices))
             
             random_trees.append(self.rftree.build(X[bootstrap_indices], y[bootstrap_indices]))
