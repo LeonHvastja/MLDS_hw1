@@ -196,6 +196,14 @@ def misclassification_rate(prediction, y):
     return np.mean(prediction != y)
 
 
+def hw_tree_full():
+    pass
+
+def hw_randomforests():
+    pass
+
+
+
 if __name__ == "__main__":
     learn, test, legend = tki()
 
