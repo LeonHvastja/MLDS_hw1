@@ -195,11 +195,23 @@ class RFModel:
 def misclassification_rate(prediction, y):
     return np.mean(prediction != y)
 
+def bootstrap(prediction, y, m):
+    """Take an array of predictions and true values and return a bootstrap standard deviation."""
+    bst = []
+    for i in range(m):
+        bootstrap_i = np.random.choice(range(len(prediction)),len(prediction))
+        bst.append(misclassification_rate(prediction[bootstrap_i], y[bootstrap_i]))
+    
+    return(np.mean(bst), np.var(bst)) # return mean and variance of the bootstrap 
+
 
 def hw_tree_full():
     pass
 
 def hw_randomforests():
+    pass
+
+def tki():
     pass
 
 
