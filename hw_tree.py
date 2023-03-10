@@ -26,6 +26,8 @@ class Tree:
         Recusrively build a tree, stop recursion when a split has a child node with gini impurity 0 or
         when we have less than min_samples samples.
         """
+        if (len(y) == 0): # for an empty branch just return 0
+            return TreeNode(None, None, 0)
         if (len(y) < self.min_samples): # we are in a leaf node
             return TreeNode(None, None, round(np.mean(y))) # make the majority class the prediction for this node
         if (np.all(y == 1)): # check if we have a node with all ones
