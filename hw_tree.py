@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import random
 
 
@@ -204,8 +205,22 @@ def bootstrap(prediction, y, m):
     
     return(np.mean(bst), np.var(bst)) # return mean and variance of the bootstrap 
 
+def get_data():
+    """Assumes the tki-resistance.csv is in our working directory.
+    Returns (X_train, y_train, X_test, y_test)
+    """
+    data = pd.read_csv("tki-resistance.csv")
+    data["Class"] = data["Class"].map({"Bcr-abl":0, "Wild type":1})
+    X, y = np.array(data)[:,0:-1], np.array(data)[:,-1]
+    X_train, y_train, X_test, y_test = X[:130], y[:130], X[130:], y[130:]
+
+    return X_train, y_train, X_test, y_test
 
 def hw_tree_full():
+    """In function hw_tree_full, build a tree with min_samples=2.
+    Return misclassification rates and standard errors (to quantify uncertainty) on training and testing data."""
+    T = Tree(min_samples=2)
+    tree = T.build()
     pass
 
 def hw_randomforests():
