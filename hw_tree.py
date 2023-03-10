@@ -196,7 +196,7 @@ class RFModel:
 def misclassification_rate(prediction, y):
     return np.mean(prediction != y)
 
-def bootstrap(prediction, y, m):
+def bootstrap(prediction, y, m=100):
     """Take an array of predictions and true values and return a bootstrap standard deviation."""
     bst = []
     for i in range(m):
@@ -214,20 +214,33 @@ def get_data():
     X, y = np.array(data)[:,0:-1], np.array(data)[:,-1]
     X_train, y_train, X_test, y_test = X[:130], y[:130], X[130:], y[130:]
 
-    return X_train, y_train, X_test, y_test
+    return ((X_train, y_train), (X_test, y_test))
 
-def hw_tree_full():
+def hw_tree_full(train, test):
     """In function hw_tree_full, build a tree with min_samples=2.
     Return misclassification rates and standard errors (to quantify uncertainty) on training and testing data."""
-    T = Tree(min_samples=2)
-    tree = T.build()
-    pass
+    (X_train, y_train), (X_test, y_test) = train, test
 
-def hw_randomforests():
-    pass
+    T = Tree(min_samples=2)
+    tree = T.build(X_train, y_train)
+
+    return (bootstrap(tree.predict(X_train), y_train), bootstrap(tree.predict(X_test), y_test))
+
+def hw_randomforests(train, test):
+    """In function hw_randomforest, use random forests with n=100 trees with min_samples=2. 
+    Return misclassification rates and standard errors (to quantify uncertainty) on training and testing data."""
+    (X_train, y_train), (X_test, y_test) = train, test
+
+    F = RandomForest(rand = random.Random(3), n=100)
+    rf = F.build(X_train, y_train)
+
+    return(bootstrap(rf.predict(X_train), y_train), bootstrap(rf.predict(X_test), y_test))
 
 def tki():
-    pass
+    train, test = get_data()
+    legend = {"Bcr-abl":0, "Wild type":1}
+
+    return train, test, legend
 
 
 
